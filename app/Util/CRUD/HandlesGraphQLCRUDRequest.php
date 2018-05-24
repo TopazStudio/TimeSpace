@@ -17,8 +17,8 @@ trait HandlesGraphQLCRUDRequest
      * @throws Exception
      */
     public function Add(){
-        if($this->CRUDService->gqlAdd($this->request)){
-            return $this->CRUDService->info['Add']['Successful'];
+        if($this->CRUDService->add($this->request)){
+            return $this->CRUDService->info['added'];
         }else{
             throw new Exception(json_encode($this->CRUDService->errors));
         }
@@ -30,8 +30,8 @@ trait HandlesGraphQLCRUDRequest
      * @throws Exception
      */
     public function Update(){
-        if($this->CRUDService->gqlUpdate($this->request,$this->request->id)){
-            return $this->CRUDService->info['Update']['Successful'];
+        if($this->CRUDService->update($this->request,$this->request->id)){
+            return $this->CRUDService->info['updated'];
         }else{
             throw new Exception(json_encode($this->CRUDService->errors));
         }
@@ -43,8 +43,8 @@ trait HandlesGraphQLCRUDRequest
      * @throws Exception
      */
     public function Delete(){
-        if($this->CRUDService->gqlDelete($this->request,$this->request->id)){
-            return $this->CRUDService->info['Delete']['Successful'];
+        if($this->CRUDService->delete($this->request,$this->request->id)){
+            return $this->CRUDService->info['deleted'];
         }else{
             throw new Exception(json_encode($this->CRUDService->errors));
         }
@@ -59,10 +59,10 @@ trait HandlesGraphQLCRUDRequest
     {
         return [
             'type' => [
-                'type' => Type::string()
+                'type' => Type::nonNull(Type::string())
             ],
             'raw' => [
-                'type' => Type::string()
+                'type' => Type::nonNull(Type::string())
             ]
         ];
     }

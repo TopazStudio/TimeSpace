@@ -119,9 +119,9 @@ trait HandlesCRUD
         //PERSIST
         $model = call_user_func([$this->getModelType(),'create'],$attributes);
         if($model){
-            $this->info['added'][] = $model->id;
+            $this->info['added'] = $model;
         }else{
-            $this->errors['not_added'][] = $model->id;
+            $this->errors['not_added'] = $model;
         }
 
         //Add hook after creating
@@ -146,9 +146,9 @@ trait HandlesCRUD
         //UPDATE
         if($model = $this->getModel($request,$id)) {
             if ($model->update($request->only($this->fromSettings('attributes')))) {
-                $this->info['updated'][] = $id;
+                $this->info['updated'] = $model;
             } else {
-                $this->errors['not_updated'][] = $id;
+                $this->errors['not_updated'] = $model;
             }
         }
 
@@ -174,9 +174,9 @@ trait HandlesCRUD
         //DELETE
         if($model = $this->getModel($request,$id)) {
             if ($model->delete()) {
-                $this->info['deleted'][] = $id;
+                $this->info['deleted'] = $model;
             } else {
-                $this->errors['not_deleted'][] = $id;
+                $this->errors['not_deleted'] = $model;
             }
         }
 

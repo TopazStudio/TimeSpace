@@ -4,6 +4,7 @@ namespace App\Service;
 
 use App\Util\CRUD\CRUDService;
 use App\Util\CRUD\HandlesCRUD;
+use App\Util\CRUD\HandlesGraphQLCRUD;
 
 /**
  * Created by PhpStorm.

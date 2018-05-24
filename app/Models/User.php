@@ -22,7 +22,6 @@ class User extends Authenticatable implements CRUDable
         'email',
         'password',
         'tel',
-        'identification_no',
     ];
 
     /**
@@ -54,7 +53,6 @@ class User extends Authenticatable implements CRUDable
                 'email',
                 'password',
                 'tel',
-                'identification_no',
             ],
 
             /**
