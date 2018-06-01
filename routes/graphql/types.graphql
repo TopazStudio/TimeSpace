@@ -1,0 +1,36 @@
+type User {
+    id : ID!
+    first_name : String
+    second_name : String
+    surname : String
+    name_prefix : String
+    status : Int!
+    email : String
+    tel : String
+
+    following: [User!] @hasMany
+    followers: [User!] @hasMany
+#    attendingMeetings: [Meeting!] @hasMany
+#    attendingEvents : [Event!] @hasMany
+#    attendingExaminations : [Examination!] @hasMany
+#    attendingStudies : [Study!] @hasMany
+#    attendingClazzes : [Clazz!] @hasMany
+    pictures: [Picture!] @hasMany
+}
+
+type Picture {
+    id: ID!
+    name: String
+    type: String
+    size: Int
+    location: String
+    description: String
+
+    picturable_id: ID!
+    picturable_type: String!
+}
+
+type LoginPayload{
+    token: String!
+    user: User!
+}

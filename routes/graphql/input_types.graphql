@@ -1,0 +1,46 @@
+input User_Input {
+    id : ID!
+    first_name : String
+    second_name : String
+    surname : String
+    name_prefix : String
+    status : Int!
+    email : String
+    tel : String
+}
+
+input Picture_Input {
+    id: ID!
+    name: String
+    location: String
+    description: String
+
+    picturable_id: ID!
+    picturable_type: String!
+}
+
+input Document_Input {
+    id: ID!
+    name: String
+    location: String
+    description: String
+
+    documentable_id: ID!
+    documentable_type: String!
+}
+
+input Location_Input {
+    id: ID!
+
+    country: String
+    county_or_state: String
+    city: String
+    street_address: String
+    landmarks: String
+
+    latitude: Int
+    longitude: Int
+
+    locatable_id: ID!
+    locatable_type: String
+}

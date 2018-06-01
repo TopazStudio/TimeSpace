@@ -8,7 +8,6 @@
 
 namespace App\Util\CRUD;
 
-
 use App\Events\CRUDEvent;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Request;
@@ -33,6 +32,7 @@ trait HandlesCRUD
      * Models that are authorized to modify or delete this model are
      *  - User who owns the model.
      *  - User who created the model.
+     *  - User with higher authority to do data manipulation. (eg. SYSTEM).
      *
      * The request must contain the owner key in order to modify the model.
      *
@@ -55,6 +55,8 @@ trait HandlesCRUD
                 $model->where($key,'=',null); //refuse
             }
         }
+        //TODO: CHECK FOR AUTHORITY (i.e. SYSTEM based operation)
+        //TODO: CHECK FOR AVAILABILITY
 
         $model = $model->get()->first(); //execute query
         if(!$model){
@@ -71,18 +73,36 @@ trait HandlesCRUD
      * relation keys.
      *
      * @param Request $request
-     * @return array
+     * @return array|bool
      */
     private function resolveForeignKeys(Request $request){
         $relations = array();
-        foreach ($this->fromSettings('foreign_keys') as $key) {
+        foreach ($this->fromSettings('foreign_keys') as $key => $value) {
 
+            /**
+             * If the request has the related model itself.
+             * Get it from the related model
+            */
             if ($request->has($key)){
-                $relations[$key] = $request->{$key};
+                $relations[$value] = $request->{$key}[$value];
                 continue;
             }
+            /**
+             * If the request has only the foreign key field then
+             * get it from there.
+            */
+            else if ($request->has($value)){
+                $relations[$value] = $request->{$value};
+                continue;
+            }
+            /**
+             * If there is no field. We cannot persist this to the database.
+            */
+            else {
+                $this->info['add_exception'][] = "Foreign key ". $value . " must be resolved.";
+            }
         }
-        return $relations;
+        return empty($this->errors) ? $relations: false;
     }
 
     /**
@@ -102,10 +122,17 @@ trait HandlesCRUD
      */
     public function add(Request $request){
         $model = null;
-        $attributes = array_merge(
-                        $request->only($this->fromSettings('attributes')),
-                        $this->resolveForeignKeys($request)
-                      );
+
+        if ($this->fromSettings('foreign_keys')) //If the relation has foreign keys
+            //Check for correct attributes and foreign keys
+            if($relations = $this->resolveForeignKeys($request)){
+                $attributes = array_merge(
+                    $request->only($this->fromSettings('attributes')),
+                    $relations
+                );
+
+            }else return false;
+        else $attributes = $request->only($this->fromSettings('attributes'));
 
         //handle passwords
         if (array_key_exists('password',$attributes)){
@@ -121,7 +148,7 @@ trait HandlesCRUD
         if($model){
             $this->info['added'] = $model;
         }else{
-            $this->errors['not_added'] = $model;
+            $this->errors['not_added'] = $model->id;
         }
 
         //Add hook after creating
@@ -148,7 +175,7 @@ trait HandlesCRUD
             if ($model->update($request->only($this->fromSettings('attributes')))) {
                 $this->info['updated'] = $model;
             } else {
-                $this->errors['not_updated'] = $model;
+                $this->errors['not_updated'] = $id;
             }
         }
 
@@ -176,7 +203,7 @@ trait HandlesCRUD
             if ($model->delete()) {
                 $this->info['deleted'] = $model;
             } else {
-                $this->errors['not_deleted'] = $model;
+                $this->errors['not_deleted'] = $id;
             }
         }
 
@@ -190,31 +217,57 @@ trait HandlesCRUD
     /**
      * Fetch all Models without any restriction.
      *
-     * @return \Illuminate\Database\Eloquent\Collection|static[]
+     * @param Request $request
+     * @return bool
      * @internal param $id
      */
-    public function getAll(){
-        try{
-            return call_user_func([$this->getModelType(),'all']);
-        }catch (\Exception $e){
-            $this->errors['get_failed'] = $e->getMessage();
-            return $this->errors;
+    public function getAll(Request $request){
+        //Add hook before get_all
+        if(!$this->beforeGetAll($request))
+            return empty($this->errors);
+
+        //GET ALL
+        if($models = call_user_func([$this->getModelType(),'all'])) {
+            if ($models) {
+                $this->info['get_all'] = $models;
+            } else {
+                $this->errors['get_all'] = "failed";
+            }
         }
+
+        //Add hook after update
+        if(!$this->afterGetAll($request,$models))
+            return empty($this->errors);
+
+        return empty($this->errors);
     }
 
     /**
      * Fetch a Model without any restriction.
      *
+     * @param Request $request
      * @param $id
-     * @return array|Model
+     * @return bool
      */
-    public function get($id){
-        try{
-            return call_user_func_array([$this->getModelType(),'where'],['id','=',$id])->get();
-        }catch (\Exception $e){
-            $this->errors['get_failed'] = $e->getMessage();
-            return $this->errors;
+    public function get(Request $request, $id){
+        //Add hook before get_all
+        if(!$this->beforeGet($request))
+            return empty($this->errors);
+
+        //GET
+        if($model = call_user_func_array([$this->getModelType(),'where'],['id','=',$id])->get()) {
+            if ($model) {
+                $this->info['get'] = $model;
+            } else {
+                $this->errors['get'] = "not_found";
+            }
         }
+
+        //Add hook after update
+        if(!$this->afterGet($request,$model))
+            return empty($this->errors);
+
+        return empty($this->errors);
     }
 
     //HOOKS
@@ -264,6 +317,26 @@ trait HandlesCRUD
             'model' => $model
         ]);
         broadcast($crudEvent)->toOthers();
+        return true;
+    }
+
+    public function beforeGetAll($request){
+        //
+        return true;
+    }
+
+    public function afterGetAll($request,$models){
+       //
+        return true;
+    }
+
+    public function beforeGet($request){
+        //
+        return true;
+    }
+
+    public function afterGet($request,$model){
+        //
         return true;
     }
 }

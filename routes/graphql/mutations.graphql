@@ -1,0 +1,16 @@
+type Mutation{
+
+    user(
+        method: MUTATION_METHOD!
+        user : User_Input!
+
+        pictures: [Picture_Input!]
+
+        password: String @validate(rules: ["nullable","min:6"])
+    ): User @field(resolver: "App\\GraphQL\\Mutation\\User@resolve")
+
+    login(
+        email: String!
+        password: String! @validate(rules: ["required","min:6"])
+    ): LoginPayload @field(resolver: "App\\GraphQL\\Mutation\\Login@resolve")
+}

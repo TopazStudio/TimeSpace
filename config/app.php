@@ -151,6 +151,7 @@ return [
          * Package Service Providers...
          */
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
+        Zizaco\Entrust\EntrustServiceProvider::class,
         /*
          * Application Service Providers...
          */
@@ -211,6 +212,7 @@ return [
 
         'JWTAuth' => Tymon\JWTAuth\Facades\JWTAuth::class,
         'JWTFactory' => Tymon\JWTAuth\Facades\JWTFactory::class,
+        'Entrust'   => Zizaco\Entrust\EntrustFacade::class,
     ],
 
 ];

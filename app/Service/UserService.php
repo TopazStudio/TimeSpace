@@ -5,6 +5,7 @@ namespace App\Service;
 use App\Util\CRUD\CRUDService;
 use App\Util\CRUD\HandlesCRUD;
 use App\Util\CRUD\HandlesGraphQLCRUD;
+use App\Util\CRUD\HandlesRoles;
 
 /**
  * Created by PhpStorm.
@@ -15,7 +16,7 @@ use App\Util\CRUD\HandlesGraphQLCRUD;
 
 class UserService implements CRUDService
 {
-    use HandlesCRUD;
+    use HandlesCRUD,HandlesRoles;
 
     /**
      * Initialize pic-path and pic-type
@@ -34,6 +35,11 @@ class UserService implements CRUDService
     public function getEventChannel()
     {
         return 'user';
+    }
+
+    public function afterCreate($request, $model)
+    {
+        $this->assignRole($request,$model);
     }
 
 }
