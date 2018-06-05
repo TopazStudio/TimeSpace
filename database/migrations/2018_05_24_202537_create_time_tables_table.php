@@ -41,6 +41,7 @@ class CreateTimeTablesTable extends Migration
              * 2) inactive : not in use
             */
             $table->unsignedInteger('status');
+            $table->unsignedInteger('color');
             $table->unsignedInteger('priority');
 
             //metadata

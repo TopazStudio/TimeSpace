@@ -16,6 +16,7 @@ class  TimeTable extends Model
         'group_id',
 
         'name',
+        'color',
         'type',
         'status',
         'priority'
@@ -33,6 +34,7 @@ class  TimeTable extends Model
             'attributes' => [
                 'name',
                 'type',
+                'color',
                 'status',
                 'priority'
             ],

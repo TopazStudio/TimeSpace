@@ -21,7 +21,7 @@ class CreateMeetingsTable extends Migration
 
             //other
             $table->string('name');
-            $table->text('note');
+            $table->text('note')->nullable();
             $table->unsignedMediumInteger('color')->nullable();
             $table->string('description')->nullable();
 

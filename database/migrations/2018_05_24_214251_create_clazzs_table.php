@@ -18,15 +18,17 @@ class CreateClazzsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('owner_id');
             $table->unsignedInteger('time_table_id'); //The timetable this examination is for
+            /**
+             * If the teacher is not registered then we can create a fake teacher-user model
+             * and send an invitation link to the teacher. When accepted the teacher will be
+             * loaded into the model easily.
+            */
             $table->unsignedInteger('teacher_id');
-
-            $table->string('teacher_name'); //if the teacher is not registered
-            $table->string('teacher_email');
-            $table->string('teacher_tell');
 
             //other
             $table->string('name');
-            $table->string('abbreviation');
+            $table->string('abbreviation')->nullable();
+            $table->string('note')->nullable();
             $table->unsignedMediumInteger('color')->nullable();
             $table->string('description')->nullable();
 

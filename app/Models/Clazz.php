@@ -13,11 +13,12 @@ class Clazz extends Model
      */
     protected $fillable = [
         'owner_id',
+        'time_table_id',
         'teacher_id',
 
         'name',
+        'note',
         'abbreviation',
-        'teacher', //if the teacher is not register
         'color',
         'description',
     ];
@@ -33,8 +34,8 @@ class Clazz extends Model
              */
             'attributes' => [
                 'name',
+                'note',
                 'abbreviation',
-                'teacher_unique',
                 'color',
                 'description',
             ],
@@ -45,6 +46,7 @@ class Clazz extends Model
             'foreign_keys' => [
                 'owner_id',
                 'teacher_id',
+                'time_table_id'
             ],
 
             /**
@@ -58,28 +60,29 @@ class Clazz extends Model
 
     //###################  RELATIONSHIPS ##################//
 
-    //###################  MANY TO MANY POLYMORPHIC RELATIONSHIPS ##################//
-
     //attending users
     public function attendingUsers(){
         return $this->morphToMany('App\Models\User', 'attendable');
     }
-
-    //################# ONE TO MANY POLYMORPHIC RELATIONSHIPS #######################//
 
     //attendances
     public function attendances(){
         return $this->morphMany('App\Models\Attendance', 'attendable');
     }
 
-    //pictures
-    public function pictures(){
-        return $this->morphMany('App\Models\Picture','picturable');
+    //attending users
+    public function teacher(){
+        return $this->belongsTo('App\Models\User', 'teacher_id');
     }
 
-    //documents
-    public function documents(){
-        return $this->morphMany('App\Models\Document','documentable');
+    //attending users
+    public function owner(){
+        return $this->belongsTo('App\Models\User', 'owner_id');
+    }
+
+    //attending users
+    public function time_table(){
+        return $this->belongsTo('App\Models\TimeTable', 'time_table_id');
     }
 
     //location
