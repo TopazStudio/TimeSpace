@@ -16,6 +16,9 @@ trait HandlesCRUDRequest
 {
     use DoesResponses;
 
+    /**
+     * @var $CRUDService \App\Util\CRUD\HandlesCRUD
+     * */
     protected $CRUDService;
 
     //TODO: make dynamic adding and updating validation rules
@@ -26,21 +29,31 @@ trait HandlesCRUDRequest
     /**
      * Fetch all Models without any restriction.
      *
+     * @param Request $request
      * @return \Illuminate\Http\JsonResponse
      * @internal param $id
      */
-    public function getAll(){
-        return $this->successResponse($this->CRUDService->getAll());
+    public function getAll(Request $request){
+        if($this->CRUDService->getAll($request)){
+            return $this->successResponse($this->CRUDService->data);
+        }else{
+            return $this->errorResponse($this->CRUDService->errors,$this->CRUDService->data);
+        }
     }
 
     /**
      * Fetch a Model without any restriction.
      *
+     * @param Request $request
      * @param $id
      * @return \Illuminate\Http\JsonResponse
      */
-    public function get($id){
-        return $this->successResponse($this->CRUDService->get($id));
+    public function get(Request $request,$id){
+        if($this->CRUDService->get($request,$id)){
+            return $this->successResponse($this->CRUDService->data,$this->CRUDService->status);
+        }else{
+            return $this->errorResponse($this->CRUDService->errors,$this->CRUDService->data,$this->CRUDService->status);
+        }
     }
 
     /**
@@ -53,9 +66,9 @@ trait HandlesCRUDRequest
         $this->validate($request,$this->addValidationRules);
 
         if($this->CRUDService->add($request)){
-            return $this->successResponse($this->CRUDService->info);
+            return $this->successResponse($this->CRUDService->data,$this->CRUDService->status);
         }else{
-            return $this->errorResponse($this->CRUDService->errors,$this->CRUDService->info);
+            return $this->errorResponse($this->CRUDService->errors,$this->CRUDService->data,$this->CRUDService->status);
         }
     }
 
@@ -71,9 +84,9 @@ trait HandlesCRUDRequest
         $this->validate($request,$this->updateValidationRules);
 
         if($this->CRUDService->update($request,$id)){
-            return $this->successResponse($this->CRUDService->info);
+            return $this->successResponse($this->CRUDService->data,$this->CRUDService->status);
         }else{
-            return $this->errorResponse($this->CRUDService->errors,$this->CRUDService->info);
+            return $this->errorResponse($this->CRUDService->errors,$this->CRUDService->data,$this->CRUDService->status);
         }
     }
 
@@ -83,15 +96,13 @@ trait HandlesCRUDRequest
      * @param Request $request
      * @param  int $id
      * @return \Illuminate\Http\JsonResponse
+     * @throws \Exception
      */
     public function delete(Request $request,$id){
         if($this->CRUDService->delete($request, $id)){
-            return $this->successResponse($this->CRUDService->info);
+            return $this->successResponse($this->CRUDService->data,$this->CRUDService->status);
         }else{
-            return $this->errorResponse($this->CRUDService->errors,$this->CRUDService->info);
+            return $this->errorResponse($this->CRUDService->errors,$this->CRUDService->data,$this->CRUDService->status);
         }
     }
-
-
-
 }

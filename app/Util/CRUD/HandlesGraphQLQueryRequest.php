@@ -29,13 +29,13 @@ trait HandlesGraphQLQueryRequest
      * Fetch a Model without any restriction.
      *
      * @param Request $request
-     * @return Model
+     * @return array|Model
      * @throws Exception
      */
     public function GET_ONE(Request $request){
-        if (!$request->id) {
+        if ($request->has('id')) {
             if($this->CRUDService->get($request,$request->id)){
-                return $this->CRUDService->info['get'];
+                return [$this->CRUDService->data];
             }else{
                 throw new Exception(json_encode($this->CRUDService->errors));
             }
@@ -48,12 +48,12 @@ trait HandlesGraphQLQueryRequest
      * Fetch all Models without any restriction.
      *
      * @param Request $request
-     * @return \Illuminate\Http\JsonResponse
+     * @return array
      * @throws Exception
      */
     public function GET_ALL(Request $request){
         if($this->CRUDService->getAll($request)){
-            return $this->CRUDService->info['get_all'];
+            return $this->CRUDService->data;
         }else{
             throw new Exception(json_encode($this->CRUDService->errors));
         }

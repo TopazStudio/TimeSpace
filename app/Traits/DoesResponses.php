@@ -9,30 +9,41 @@ trait DoesResponses
     /**
      * Return an error response
      *
-     * @param string $info
-     * @param string $error
+     * @param string $errors
+     * @param string $data
      * @param int $status
      * @return \Illuminate\Http\JsonResponse
      */
-    public function errorResponse($error = '',$info = '',$status = 400){
+    public function errorResponse($errors = '',$data = '',$status = 400){
         return response()->json([
-            'status' => 'ERROR',
-            'error' => $error,
-            'info' => $info
+            'errors' => $errors,
+            'data' => $data
         ],$status);
     }
 
     /**
      * Return an success response with info.
      *
-     * @param string $info
+     * @param string $data
      * @param int $status
      * @return \Illuminate\Http\JsonResponse
      */
-    public function successResponse($info = '',$status = 200){
+    public function successResponse($data = '',$status = 200){
         return response()->json([
-            'status' => 'OK',
-            'info' => $info
+            'data' => $data
+        ],$status);
+    }
+
+    /**
+     * Return a created response after an Add method.
+     *
+     * @param string $data
+     * @param int $status
+     * @return \Illuminate\Http\JsonResponse
+     */
+    public function createdResponse($data = '',$status = 201){
+        return response()->json([
+            'data' => $data
         ],$status);
     }
 }

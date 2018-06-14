@@ -2,9 +2,10 @@
 
 namespace App\Service;
 
+use App\Events\CRUDEvent;
 use App\Util\CRUD\CRUDService;
 use App\Util\CRUD\HandlesCRUD;
-use App\Util\CRUD\HandlesGraphQLCRUD;
+use App\Util\CRUD\HandlesImages;
 use App\Util\CRUD\HandlesRoles;
 
 /**
@@ -14,17 +15,15 @@ use App\Util\CRUD\HandlesRoles;
  * Time: 12:52 AM
  */
 
-class UserService implements CRUDService
-{
-    use HandlesCRUD,HandlesRoles;
+class UserService extends Service{
 
+    use HandlesImages;
     /**
      * Initialize pic-path and pic-type
      */
     public function __construct(){
-
-        $this->picType = $this->getModelType(); //Default polymorphic name is the full namespace
-        $this->picPath = 'userPics';
+        $this->picPath = "userPics";
+        $this->picType = "user";
     }
 
     public function getModelType()
@@ -39,7 +38,21 @@ class UserService implements CRUDService
 
     public function afterCreate($request, $model)
     {
-        $this->assignRole($request,$model);
+        parent::afterCreate($request,$model);
+
+//        $this->assignRole($request,$model);
+
+        //TODO: make Transactable. Should be atomic if it fails
+        //IF THE USER HAS TEMPORARY PICTURES SAVE THEM
+        if($request->has("with_temp_pics")){
+            $pics = [];
+            foreach ($request->pictures as $picture){
+                $pics[] = $this->saveImagesFromTemp($picture,$model->id);
+            }
+            $this->data['pictures'] = $pics;
+        }
+
+        return true;
     }
 
 }

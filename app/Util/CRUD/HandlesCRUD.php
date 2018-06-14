@@ -15,7 +15,24 @@ use Illuminate\Support\Facades\Input;
 
 trait HandlesCRUD
 {
-    use HandlesImages, HasErrorsAndInfo ;
+
+    /**
+     * Errors found in processing services.
+     *
+     * */
+    public $errors = [];
+
+    /**
+     * Information after processing services.
+     *
+     * */
+    public $data = [];
+
+    /**
+     * Status of the service.
+     *
+     * */
+    public $status = 200;
 
     /**
      * Fetch model's CRUD settings
@@ -40,27 +57,48 @@ trait HandlesCRUD
      * @param $id
      * @return bool|Model
      */
-    private function getModel(Request $request, $id){
-        //Start query building
-        $model = call_user_func_array([$this->getModelType(),'where'],['id','=',$id]); //fetch with models id
+    private function getModel(Request $request, $id,$mode){
+        $model = null;
 
-        //CHECK FOR OWNER
-        foreach ($this->fromSettings('owner') as $key => $value){
-            if ($request->has($key)){
-                $model->where($key,'=',$request->get($key));
-            }else if($value){
+        //Start query building
+        $model = call_user_func_array([$this->getModelType(), 'where'], ['id', '=', $id]);//fetch with models id
+
+        //CHECK FOR EXISTANCE
+        $test = $model;
+        try {
+            if (!$test->first()) {
+                $this->errors[$mode] = "The resource with id: " . $id . " could not be found";
+                $this->status = 403;
+                return false;
+            }
+        } catch (\Exception $e) {
+            $this->errors[$mode] = $e->getMessage();
+            $this->status = 500;
+            return false;
+        }
+
+        //CHECK FOR OWNERSHIP
+        foreach ($this->fromSettings('owner') as $key => $value) {
+            if ($request->has($key)) {
+                $model->where($key, '=', $request->get($key));
+            } else if ($value) {
                 //for root nodes that have no owner (i.e property type)
-                $model->where($key,'=',$value);
-            }else{
-                $model->where($key,'=',null); //refuse
+                $model->where($key, '=', $value);
+            } else {
+                $model->where($key, '=', null); //refuse
             }
         }
-        //TODO: CHECK FOR AUTHORITY (i.e. SYSTEM based operation)
-        //TODO: CHECK FOR AVAILABILITY
 
-        $model = $model->get()->first(); //execute query
-        if(!$model){
-            $this->errors['not_authorized'][] = $id;
+        //EXECUTE QUERY
+        try {
+            if (!$model = $model->first()) {
+                $this->errors['authorization'] = 'You are not authorized for this operation.';
+                $this->status = 403;
+                return false;
+            }
+        } catch (\Exception $e) {
+            $this->errors[$mode] = $e->getMessage();
+            $this->status = 500;
             return false;
         }
 
@@ -82,7 +120,7 @@ trait HandlesCRUD
             /**
              * If the request has the related model itself.
              * Get it from the related model
-            */
+             */
             if ($request->has($key)){
                 $relations[$value] = $request->{$key}[$value];
                 continue;
@@ -90,16 +128,17 @@ trait HandlesCRUD
             /**
              * If the request has only the foreign key field then
              * get it from there.
-            */
+             */
             else if ($request->has($value)){
                 $relations[$value] = $request->{$value};
                 continue;
             }
             /**
              * If there is no field. We cannot persist this to the database.
-            */
+             */
             else {
-                $this->info['add_exception'][] = "Foreign key ". $value . " must be resolved.";
+                $this->errors['add'] = "Foreign key ". $value . " must be resolved.";
+                $this->status = 500;
             }
         }
         return empty($this->errors) ? $relations: false;
@@ -143,12 +182,21 @@ trait HandlesCRUD
         if(!$this->beforeCreate($request,$attributes))
             return empty($this->errors);
 
-        //PERSIST
-        $model = call_user_func([$this->getModelType(),'create'],$attributes);
-        if($model){
-            $this->info['added'] = $model;
-        }else{
-            $this->errors['not_added'] = $model->id;
+        //ADD
+        //TODO: catch any queries Errors
+        try {
+            if ($model = call_user_func([$this->getModelType(), 'create'], $attributes)) {
+                $this->data = $model;
+                $this->status = 200;
+            } else {
+                $this->errors['add'] = "Adding resource with id: " . $model->id . "failed";
+                $this->status = 500;
+                return empty($this->errors);
+            }
+        } catch (\Exception $e) {
+            $this->errors['add'] = $e->getMessage();
+            $this->status = 500;
+            return empty($this->errors);
         }
 
         //Add hook after creating
@@ -171,17 +219,20 @@ trait HandlesCRUD
             return empty($this->errors);
 
         //UPDATE
-        if($model = $this->getModel($request,$id)) {
+        if($model = $this->getModel($request,$id,"update")) {
             if ($model->update($request->only($this->fromSettings('attributes')))) {
-                $this->info['updated'] = $model;
+                $this->data = $model;
+                $this->status = 200;
             } else {
-                $this->errors['not_updated'] = $id;
+                $this->errors['delete'] = "Deleting resource with id: " . $id . "failed";
+                $this->status = 500;
+                return empty($this->errors);
             }
-        }
 
-        //Add hook after update
-        if(!$this->afterUpdate($request,$model))
-            return empty($this->errors);
+            //Add hook after update
+            if(!$this->afterUpdate($request,$model))
+                return empty($this->errors);
+        }
 
         return empty($this->errors);
     }
@@ -192,24 +243,30 @@ trait HandlesCRUD
      * @param Request $request
      * @param $id
      * @return bool
+     * @throws \Exception
      */
     public function delete(Request $request,$id){
+        $model = null;
+
         //Add hook before delete
         if(!$this->beforeDelete($request,$id))
             return empty($this->errors);
 
         //DELETE
-        if($model = $this->getModel($request,$id)) {
+        if($model = $this->getModel($request,$id,"delete")) {
             if ($model->delete()) {
-                $this->info['deleted'] = $model;
+                $this->data = $model;
+                $this->status = 200;
             } else {
-                $this->errors['not_deleted'] = $id;
+                $this->errors['delete'] = "Deleting resource with id: " . $id . "failed";
+                $this->status = 500;
+                return empty($this->errors);
             }
-        }
 
-        //Add hook after creating
-        if(!$this->afterDelete($request,$model))
-            return empty($this->errors);
+            //Add hook after creating
+            if(!$this->afterDelete($request,$model))
+                return empty($this->errors);
+        }
 
         return empty($this->errors);
     }
@@ -222,17 +279,20 @@ trait HandlesCRUD
      * @internal param $id
      */
     public function getAll(Request $request){
+        $models = [];
+
         //Add hook before get_all
         if(!$this->beforeGetAll($request))
             return empty($this->errors);
 
         //GET ALL
-        if($models = call_user_func([$this->getModelType(),'all'])) {
-            if ($models) {
-                $this->info['get_all'] = $models;
-            } else {
-                $this->errors['get_all'] = "failed";
-            }
+        try {
+            $this->data = $models = call_user_func([$this->getModelType(), 'all']);
+            $this->status = 200;
+        } catch (\Exception $e) {
+            $this->errors['get_all'] = $e->getMessage();
+            $this->status = 500;
+            return empty($this->errors);
         }
 
         //Add hook after update
@@ -250,17 +310,26 @@ trait HandlesCRUD
      * @return bool
      */
     public function get(Request $request, $id){
+        $model = null;
+
         //Add hook before get_all
         if(!$this->beforeGet($request))
             return empty($this->errors);
 
         //GET
-        if($model = call_user_func_array([$this->getModelType(),'where'],['id','=',$id])->get()) {
-            if ($model) {
-                $this->info['get'] = $model;
+        try {
+            if ($model = call_user_func_array([$this->getModelType(), 'where'], ['id', '=', $id])->get()->first()) {
+                $this->data = $model;
+                $this->status = 200;
             } else {
                 $this->errors['get'] = "not_found";
+                $this->status = 404;
+                return empty($this->errors);
             }
+        } catch (\Exception $e) {
+            $this->errors['get'] = $e->getMessage();
+            $this->status = 500;
+            return empty($this->errors);
         }
 
         //Add hook after update
@@ -278,13 +347,7 @@ trait HandlesCRUD
     }
 
     public function afterCreate($request,$model){
-        $crudEvent = new CRUDEvent();
-        $crudEvent->setPayload([
-            'crudType' => 'created',
-            'channel' => $this->getEventChannel(),
-            'model' => $model
-        ]);
-        broadcast($crudEvent)->toOthers();
+        //
         return true;
     }
 
@@ -294,13 +357,7 @@ trait HandlesCRUD
     }
 
     public function afterUpdate($request,$model){
-        $crudEvent = new CRUDEvent();
-        $crudEvent->setPayload([
-            'crudType' => 'updated',
-            'channel' => $this->getEventChannel(),
-            'model' => $model
-        ]);
-        broadcast($crudEvent)->toOthers();
+       //
         return true;
     }
 
@@ -310,13 +367,7 @@ trait HandlesCRUD
     }
 
     public function afterDelete($request,$model){
-        $crudEvent = new CRUDEvent();
-        $crudEvent->setPayload([
-            'crudType' => 'deleted',
-            'channel' => $this->getEventChannel(),
-            'model' => $model
-        ]);
-        broadcast($crudEvent)->toOthers();
+       //
         return true;
     }
 

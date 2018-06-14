@@ -1,5 +1,7 @@
 type User {
+    #The id of the user
     id : ID!
+
     first_name : String
     second_name : String
     surname : String
@@ -10,12 +12,7 @@ type User {
 
     following: [User!] @hasMany
     followers: [User!] @hasMany
-#    attendingMeetings: [Meeting!] @hasMany
-#    attendingEvents : [Event!] @hasMany
-#    attendingExaminations : [Examination!] @hasMany
-#    attendingStudies : [Study!] @hasMany
-#    attendingClazzes : [Clazz!] @hasMany
-    pictures: [Picture!] @hasMany
+    pictures: [Picture!]! @hasMany
 }
 
 type Picture {
@@ -23,7 +20,7 @@ type Picture {
     name: String
     type: String
     size: Int
-    location: String
+    remote_location: String
     description: String
 
     picturable_id: ID!

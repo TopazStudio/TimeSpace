@@ -12,7 +12,9 @@ input User_Input {
 input Picture_Input {
     id: ID!
     name: String
-    location: String
+    type: String
+    size: Int
+    remote_location: String
     description: String
 
     picturable_id: ID!

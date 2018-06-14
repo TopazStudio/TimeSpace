@@ -36,6 +36,10 @@ class User
             throw new \Exception(json_encode('Cannot register without password'));
         }
 
+        if(isset($args['pictures'])){
+            $context->request->request->add(['with_temp_pics' => true]);
+        }
+
         $context->request->merge(array_merge($args['user'],$args));
 
         $fn = $args['method'];
