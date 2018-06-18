@@ -17,11 +17,19 @@ Route::group(['prefix'=>'/temp'],function () {
 Route::group(['prefix'=>'/auth', 'middleware'=>['web']],function () {
 
     Route::post('/login', [
-        'uses' => 'Auth\LoginController@login',
+        'uses' => 'AuthController@login',
     ]);
 
     Route::get('/logout', [
-        'uses' => 'Auth\LoginController@logout',
+        'uses' => 'AuthController@logout',
+    ]);
+
+    Route::post('/signInWithGoogle', [
+        'uses' => 'AuthController@signInWithGoogle',
+    ]);
+
+    Route::post('/signInWithFacebook', [
+        'uses' => 'AuthController@signInWithFacebook',
     ]);
 
 });
