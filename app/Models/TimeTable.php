@@ -3,9 +3,12 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Sleimanx2\Plastic\Searchable;
 
 class  TimeTable extends Model
 {
+    use Searchable;
+
     /**
      * The attributes that are mass assignable.
      *
@@ -54,6 +57,17 @@ class  TimeTable extends Model
                 'owner_id' => null,
             ]
         ];
+    }
+
+    //#################### SEARCHING ###################//
+
+    public $documentType = 'timetable';
+
+    public static function index(){
+        foreach (static::all() as $model){
+            $model->document()->save();
+        }
+        return true;
     }
 
     //#################### RELATIONSHIPS ###################//

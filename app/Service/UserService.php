@@ -17,7 +17,6 @@ use App\Util\CRUD\HandlesRoles;
 
 class UserService extends Service{
 
-    use HandlesImages;
     /**
      * Initialize pic-path and pic-type
      */
@@ -41,16 +40,6 @@ class UserService extends Service{
         parent::afterCreate($request,$model);
 
 //        $this->assignRole($request,$model);
-
-        //TODO: make Transactable. Should be atomic if it fails
-        //IF THE USER HAS TEMPORARY PICTURES SAVE THEM
-        if($request->has("with_temp_pics")){
-            $pics = [];
-            foreach ($request->pictures as $picture){
-                $pics[] = $this->saveImagesFromTemp($picture,$model->id);
-            }
-            $this->data['pictures'] = $pics;
-        }
 
         return true;
     }

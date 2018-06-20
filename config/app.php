@@ -153,6 +153,7 @@ return [
         Tymon\JWTAuth\Providers\JWTAuthServiceProvider::class,
         Zizaco\Entrust\EntrustServiceProvider::class,
         SammyK\LaravelFacebookSdk\LaravelFacebookSdkServiceProvider::class,
+        Sleimanx2\Plastic\PlasticServiceProvider::class,
         /*
          * Application Service Providers...
          */

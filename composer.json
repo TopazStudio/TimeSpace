@@ -12,6 +12,7 @@
         "laravel/tinker": "^1.0",
         "nuwave/lighthouse": "^2.0",
         "sammyk/laravel-facebook-sdk": "^3.5",
+        "sleimanx2/plastic": "^0.5.3",
         "tymon/jwt-auth": "0.5.*",
         "zizaco/entrust": "5.2.*"
     },

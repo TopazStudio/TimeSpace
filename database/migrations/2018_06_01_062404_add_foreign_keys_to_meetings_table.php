@@ -34,7 +34,6 @@ class AddForeignKeysToMeetingsTable extends Migration
         Schema::table('meetings', function (Blueprint $table) {
             $table->dropForeign('meetings_owner_id_foreign');
             $table->dropForeign('meetings_time_table_id_foreign');
-            $table->dropForeign('meetings_agenda_id_foreign');
         });
     }
 }

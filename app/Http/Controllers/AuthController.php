@@ -20,7 +20,7 @@ use Tymon\JWTAuth\Facades\JWTAuth;
 
 class AuthController extends Controller
 {
-    use AuthenticatesUsers,DoesResponses;
+    use AuthenticatesUsers;
 
     /**
      * @var $authService \App\Service\AuthService

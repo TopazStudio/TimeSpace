@@ -2,32 +2,16 @@
 
 namespace App\GraphQL\Query;
 
-use Folklore\GraphQL\Support\Query;
-use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Type\Definition\Type;
-use GraphQL;
+use App\Service\GroupService;
+use App\Util\CRUD\HandlesGraphQLQueryRequest;
 
-class Group extends Query
+class Group
 {
-    protected $attributes = [
-        'name' => 'Group',
-        'description' => 'A query'
-    ];
+    use HandlesGraphQLQueryRequest;
 
-    public function type()
+    public function __construct(GroupService $CRUDService)
     {
-        return Type::listOf(Type::string());
-    }
-
-    public function args()
-    {
-        return [
-            
-        ];
-    }
-
-    public function resolve($root, $args, $context, ResolveInfo $info)
-    {
-        return [];
+        $this->CRUDService = $CRUDService;
+        $this->modelType = "App\\Models\\Group";
     }
 }

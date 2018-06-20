@@ -7,8 +7,6 @@ use Illuminate\Http\Request;
 
 class TempController extends Controller
 {
-    use DoesResponses;
-
     public function storeTempPic(Request $request){
         $path = 'public/temp';
         if($request->hasFile('tempImage')){

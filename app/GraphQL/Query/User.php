@@ -4,6 +4,7 @@ namespace App\GraphQL\Query;
 
 use App\Service\UserService;
 use App\Util\CRUD\HandlesGraphQLQueryRequest;
+use GraphQL\Type\Definition\ResolveInfo;
 
 
 class User
@@ -14,5 +15,8 @@ class User
     public function __construct(UserService $CRUDService)
     {
         $this->CRUDService = $CRUDService;
+        $this->modelType = "App\\Models\\User";
     }
+
+
 }

@@ -17,7 +17,6 @@ class CreateRolePermissionsTable extends Migration
             $table->increments('id');
             $table->unsignedInteger('permission_id');
             $table->unsignedInteger('role_id');
-            $table->timestamps();
         });
     }
 

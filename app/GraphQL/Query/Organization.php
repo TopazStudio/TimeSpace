@@ -2,32 +2,19 @@
 
 namespace App\GraphQL\Query;
 
-use Folklore\GraphQL\Support\Query;
-use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Type\Definition\Type;
-use GraphQL;
 
-class Organization extends Query
+
+use App\Service\OrganizationService;
+use App\Util\CRUD\HandlesGraphQLQueryRequest;
+
+class Organization
 {
-    protected $attributes = [
-        'name' => 'Organization',
-        'description' => 'A query'
-    ];
+    use HandlesGraphQLQueryRequest;
 
-    public function type()
-    {
-        return Type::listOf(Type::string());
-    }
 
-    public function args()
+    public function __construct(OrganizationService $CRUDService)
     {
-        return [
-            
-        ];
-    }
-
-    public function resolve($root, $args, $context, ResolveInfo $info)
-    {
-        return [];
+        $this->CRUDService = $CRUDService;
+        $this->modelType = "App\\Models\\Organization";
     }
 }

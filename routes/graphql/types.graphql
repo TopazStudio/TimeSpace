@@ -15,6 +15,49 @@ type User {
     pictures: [Picture!]! @hasMany
 }
 
+type UserSearchResults{
+    took : Int
+    totalHits : Int
+    maxScore : Float
+    hits : [User!]
+}
+
+type Organization {
+    id: ID!
+    name: String
+    description: String
+
+    owner: User @belongsTo
+    groups: Group @hasMany
+    pictures: [Picture!]! @hasMany
+}
+
+type OrganizationSearchResults{
+    took : Int
+    totalHits : Int
+    maxScore : Float
+    hits : [Organization!]
+}
+
+type Group {
+    id: ID!
+    name: String
+    description: String
+    created_at: String
+
+    owner: User @belongsTo
+    organization: Organization @belongsTo
+    group_members: [User!] @hasMany
+    pictures: [Picture!]! @hasMany
+}
+
+type GroupSearchResults{
+    took : Int
+    totalHits : Int
+    maxScore : Float
+    hits : [Group!]
+}
+
 type Picture {
     id: ID!
     name: String

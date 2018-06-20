@@ -5,11 +5,12 @@ namespace App\Models;
 use App\Util\CRUD\CRUDable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Foundation\Auth\User as Authenticatable;
+use Sleimanx2\Plastic\Searchable;
 use Zizaco\Entrust\Traits\EntrustUserTrait;
 
 class User extends Authenticatable implements CRUDable
 {
-    use Notifiable, EntrustUserTrait;
+    use Notifiable, EntrustUserTrait, Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -17,7 +18,7 @@ class User extends Authenticatable implements CRUDable
      * @var array
      */
     protected $fillable = [
-        'first_name',
+            'first_name',
         'second_name',
         'surname',
         'name_prefix',
@@ -68,6 +69,19 @@ class User extends Authenticatable implements CRUDable
                 'id' => null,
             ]
         ];
+    }
+
+    //#################### SEARCHING ###################//
+
+    //TODO: map users of different roles to different types
+
+    public $documentType = 'user';
+
+    public static function index(){
+        foreach (static::all() as $model){
+            $model->document()->save();
+        }
+        return true;
     }
 
     //#################### RELATIONSHIPS ###################//

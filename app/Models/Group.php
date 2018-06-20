@@ -4,9 +4,11 @@ namespace App\Models;
 
 use App\Util\CRUD\CRUDable;
 use Illuminate\Database\Eloquent\Model;
+use Sleimanx2\Plastic\Searchable;
 
 class Group extends Model implements CRUDable
 {
+    use Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -53,6 +55,19 @@ class Group extends Model implements CRUDable
         ];
     }
 
+    //#################### SEARCHING ###################//
+
+    public $documentType = 'group';
+
+    public static function index(){
+        foreach (static::all() as $model){
+            $model->document()->save();
+        }
+        return true;
+    }
+
+    //#################### RELATIONSHIPS ###################//
+
     //owner
     public function owner(){
         return $this->belongsTo('App\Models\User','owner_id');
@@ -66,5 +81,10 @@ class Group extends Model implements CRUDable
     //groups
     public function group_members(){
         return $this->belongsToMany('App\Models\User','group_members','group_id');
+    }
+
+    //pictures
+    public function pictures(){
+        return $this->morphMany('App\Models\Picture','picturable');
     }
 }

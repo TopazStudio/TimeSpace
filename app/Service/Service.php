@@ -12,11 +12,12 @@ namespace App\Service;
 use App\Events\CRUDEvent;
 use App\Util\CRUD\CRUDService;
 use App\Util\CRUD\HandlesCRUD;
+use App\Util\CRUD\HandlesImages;
 use App\Util\CRUD\HandlesRoles;
 
 class Service implements CRUDService
 {
-    use HandlesCRUD,HandlesRoles;
+    use HandlesCRUD,HandlesRoles,HandlesImages;
 
     public function getModelType()
     {
@@ -36,6 +37,7 @@ class Service implements CRUDService
     }
 
     public function afterCreate($request,$model){
+        //SEND ANY CRUD EVENT
         $crudEvent = new CRUDEvent();
         $crudEvent->setPayload([
             'crudType' => 'created',
@@ -43,6 +45,15 @@ class Service implements CRUDService
             'model' => $model
         ]);
         broadcast($crudEvent)->toOthers();
+
+        //SAVE ANY TEMPORARY IMAGE
+        if($request->has("with_temp_pics")){
+            $pics = [];
+            foreach ($request->pictures as $picture){
+                $pics[] = $this->saveImagesFromTemp($picture,$model->id);
+            }
+            $this->data['pictures'] = $pics;
+        }
         return true;
     }
 

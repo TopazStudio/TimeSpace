@@ -3,9 +3,11 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Sleimanx2\Plastic\Searchable;
 
 class Organization extends Model
 {
+    use Searchable;
 
     /**
      * The attributes that are mass assignable.
@@ -50,6 +52,17 @@ class Organization extends Model
         ];
     }
 
+    //#################### SEARCHING ###################//
+
+    public $documentType = 'organization';
+
+    public static function index(){
+        foreach (static::all() as $model){
+            $model->document()->save();
+        }
+        return true;
+    }
+
     //#################### RELATIONSHIPS ###################//
 
 
@@ -61,6 +74,11 @@ class Organization extends Model
     //groups
     public function groups(){
         return $this->hasMany('App\Models\Group','organization_id');
+    }
+
+    //pictures
+    public function pictures(){
+        return $this->morphMany('App\Models\Picture','picturable');
     }
 
 }

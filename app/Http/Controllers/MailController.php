@@ -9,7 +9,6 @@ use Illuminate\Mail\Mailer;
 
 class MailController extends Controller
 {
-    use DoesResponses;
 
     public function sendInvitationLink(Request $request,Mailer $mailer){
         $this->validate($request,[

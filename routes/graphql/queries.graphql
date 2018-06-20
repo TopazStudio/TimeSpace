@@ -6,4 +6,22 @@ type Query{
         method: QUERY_METHOD!
         id: ID
     ): [User!]! @field(resolver: "App\\GraphQL\\Query\\User@resolve")
+
+    searchUser(
+        type: String
+        property: String
+        term: String
+    ): UserSearchResults @field(resolver: "App\\GraphQL\\Query\\User@search")
+
+    searchOrganization(
+        type: String
+        property: String
+        term: String
+    ): OrganizationSearchResults @field(resolver: "App\\GraphQL\\Query\\Organization@search")
+
+    searchGroup(
+        type: String
+        property: String
+        term: String
+    ): GroupSearchResults @field(resolver: "App\\GraphQL\\Query\\Group@search")
 }
