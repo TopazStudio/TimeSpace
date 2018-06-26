@@ -1,7 +1,6 @@
 type User {
     #The id of the user
     id : ID!
-
     first_name : String
     second_name : String
     surname : String
@@ -9,6 +8,9 @@ type User {
     status : Int!
     email : String
     tel : String
+
+    created_at: DateTime
+    updated_at: DateTime
 
     following: [User!] @hasMany
     followers: [User!] @hasMany
@@ -26,9 +28,11 @@ type Organization {
     id: ID!
     name: String
     description: String
+    created_at: DateTime
+    updated_at: DateTime
 
     owner: User @belongsTo
-    groups: Group @hasMany
+    groups: [Group!] @hasMany
     pictures: [Picture!]! @hasMany
 }
 
@@ -43,7 +47,9 @@ type Group {
     id: ID!
     name: String
     description: String
-    created_at: String
+    group_type: String
+    created_at: DateTime
+    updated_at: DateTime
 
     owner: User @belongsTo
     organization: Organization @belongsTo
@@ -65,6 +71,8 @@ type Picture {
     size: Int
     remote_location: String
     description: String
+    created_at: DateTime
+    updated_at: DateTime
 
     picturable_id: ID!
     picturable_type: String!

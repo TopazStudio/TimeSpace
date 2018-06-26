@@ -7,6 +7,16 @@ type Query{
         id: ID
     ): [User!]! @field(resolver: "App\\GraphQL\\Query\\User@resolve")
 
+    organization(
+        method: QUERY_METHOD!
+        id: ID
+    ): [Organization!]! @field(resolver: "App\\GraphQL\\Query\\Organization@resolve")
+
+    group(
+        method: QUERY_METHOD!
+        id: ID
+    ): [Group!]! @field(resolver: "App\\GraphQL\\Query\\Group@resolve")
+
     searchUser(
         type: String
         property: String

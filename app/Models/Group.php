@@ -19,6 +19,7 @@ class Group extends Model implements CRUDable
         'id',
         'owner_id',
         'organization_id',
+        'group_type',
 
         'name',
         'description',
@@ -36,6 +37,7 @@ class Group extends Model implements CRUDable
             'attributes' => [
                 'name',
                 'description',
+                'group_type'
             ],
 
             /**

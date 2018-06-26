@@ -2,4 +2,5 @@
 #import ./mutations.graphql
 #import ./enums.graphql
 #import ./types.graphql
+#import ./scalars.graphql
 #import ./input_types.graphql

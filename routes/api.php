@@ -49,10 +49,21 @@ Route::group(['prefix'=>'/search', 'middleware'=>['web']],function () {
 
 });
 
-Route::group(['prefix'=>'/mail', 'middleware'=>['web']],function () {
+Route::group(['prefix'=>'/mail', 'middleware'=>['auth.jwt']],function () {
 
     Route::post('/invite', [
         'uses' => 'MailController@sendInvitationLink',
+    ]);
+});
+
+Route::group(['prefix'=>'/group', 'middleware'=>['web']],function () {
+
+    Route::post('/joinGroup', [
+        'uses' => 'GroupController@joinGroup',
+    ]);
+
+    Route::post('/leaveGroup', [
+        'uses' => 'GroupController@leaveGroup',
     ]);
 });
 
