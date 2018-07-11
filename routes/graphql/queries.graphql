@@ -7,6 +7,16 @@ type Query{
         id: ID
     ): [User!]! @field(resolver: "App\\GraphQL\\Query\\User@resolve")
 
+    getUserDailyActivity(
+        timestamp: Float!
+        id: ID!
+    ): UserActivity! @field(resolver: "App\\GraphQL\\Query\\User@getDailyActivity")
+
+    getUserMonthlyActivity(
+        timestamp: Float!
+        id: ID!
+    ): UserActivity! @field(resolver: "App\\GraphQL\\Query\\User@getMonthlyActivity")
+
     organization(
         method: QUERY_METHOD!
         id: ID
@@ -21,6 +31,10 @@ type Query{
         type: String
         property: String
         term: String
+    ): UserSearchResults @field(resolver: "App\\GraphQL\\Query\\User@search")
+
+    searchUserComplex(
+        raw: String
     ): UserSearchResults @field(resolver: "App\\GraphQL\\Query\\User@search")
 
     searchOrganization(

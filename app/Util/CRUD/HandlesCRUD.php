@@ -17,24 +17,6 @@ trait HandlesCRUD
 {
 
     /**
-     * Errors found in processing services.
-     *
-     * */
-    public $errors = [];
-
-    /**
-     * Information after processing services.
-     *
-     * */
-    public $data = [];
-
-    /**
-     * Status of the service.
-     *
-     * */
-    public $status = 200;
-
-    /**
      * Fetch model's CRUD settings
      *
      * @param $key
@@ -279,8 +261,6 @@ trait HandlesCRUD
      * @internal param $id
      */
     public function getAll(Request $request){
-        $models = [];
-
         //Add hook before get_all
         if(!$this->beforeGetAll($request))
             return empty($this->errors);

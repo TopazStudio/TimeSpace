@@ -17,18 +17,10 @@ use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
-class AuthService
+class AuthService extends Service
 {
+    //TODO: remove ability to make responses from auth service
     use DoesResponses;
-
-    public $message = "failure";
-
-    public $status = 200;
-
-    public $data = [];
-
-    public $errors = [];
-
 
     public function signInWithGoogle(Request $request,AuthController $authController){
         $client = new \GuzzleHttp\Client();

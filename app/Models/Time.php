@@ -14,7 +14,7 @@ class Time extends Model
     protected $fillable = [
         'timable_id',
         'timable_type',
-
+        'weakly_repeats',
         'start_time',
         'end_time',
     ];

@@ -10,7 +10,8 @@ class Document extends Model
         'name',
         'type',
         'size',
-        'location',
+        'local_location',
+        'remote_location',
         'description',
 
         'documentable_id',

@@ -27,8 +27,7 @@ return [
         |
         */
         'hosts'   => [
-            "https://mbzlkumrmr:7cf7rc66xy@timespace-6184069276.us-west-2.bonsaisearch.net:443",
-//            env('PLASTIC_HOST', '127.0.0.1:9200'),
+            env('PLASTIC_HOST', '127.0.0.1:9200'),
         ],
 
         /*

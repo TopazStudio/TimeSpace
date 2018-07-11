@@ -1,0 +1,277 @@
+type User {
+    #The id of the user
+    id : ID!
+    first_name : String
+    second_name : String
+    surname : String
+    name_prefix : String
+    status : Int!
+    email : String
+    tel : String
+
+    created_at: DateTime
+    updated_at: DateTime
+
+    groups: [Group!] @hasMany
+    owned_tags: [Tag!] @hasMany
+    group_memberships: [Group_Membership!] @hasMany
+    following: [User!] @hasMany
+    followers: [User!] @hasMany
+    pictures: [Picture!]! @hasMany
+
+    meetingsOwned: [Meeting!] @hasMany
+    examinationsOwned: [Examination!] @hasMany
+    clazzesOwned: [Clazz!] @hasMany
+    attendingMeetings: [Meeting!] @hasMany
+    attendingExaminations: [Examination!] @hasMany
+    attendingClazzes: [Clazz!] @hasMany
+}
+
+type UserSearchResults{
+    took : Int
+    totalHits : Int
+    maxScore : Float
+    hits : [User!]
+}
+
+type Organization {
+    id: ID!
+    name: String
+    description: String
+    created_at: DateTime
+    updated_at: DateTime
+
+    owner: User @belongsTo
+    groups: [Group!] @hasMany
+    pictures: [Picture!]! @hasMany
+}
+
+type OrganizationSearchResults{
+    took : Int
+    totalHits : Int
+    maxScore : Float
+    hits : [Organization!]
+}
+
+type Group {
+    id: ID!
+    name: String
+    description: String
+    group_type: String
+    created_at: DateTime
+    updated_at: DateTime
+
+    owner: User @belongsTo
+    organization: Organization @belongsTo
+    group_members: [User!] @hasMany
+    group_memberships: [Group_Membership!] @hasMany
+    pictures: [Picture!]! @hasMany
+}
+
+type GroupSearchResults{
+    took : Int
+    totalHits : Int
+    maxScore : Float
+    hits : [Group!]
+}
+
+type Group_Membership {
+    id: ID!
+    join_status: String
+    created_at: DateTime
+    updated_at: DateTime
+
+    group: Group @belongsTo
+    user: User @belongsTo
+}
+
+type Timetable{
+    id: ID!
+
+    name: String
+    type: String
+    color: Int
+    status: Int
+    priorit: Int
+
+    owner: User @belongsTo
+    group: Group @belongsTo
+    tags: [Tag!] @hasMany
+    meetings: [Meeting!] @hasMany
+    examinations: [Examination!] @hasMany
+    clazzes: [Clazz!] @hasMany
+}
+
+type Attendance{
+    id: ID!
+    user_id: ID!
+
+    confirmation: Int
+
+    attendable_id: ID!
+    attendable_type: String
+}
+
+type Vote{
+    id: ID!
+    name: String
+    type: String
+    conclusion: String
+    percentage: Int
+
+    votable_id: ID!
+    votable_type: String
+
+    owner: User @belongsTo
+}
+
+type Clazz {
+    id: ID!
+    name: String
+    abbreviation: String
+    color: String
+    teacher_name: String
+    created_at: DateTime
+    updated_at: DateTime
+
+    owner: User @belongsTo
+    timetable: Timetable @belongsTo
+    attendingUsers: [User!]! @hasMany
+    attendances: [Attendance!]! @hasMany
+    time: Time @belongsTo
+    location: Location @belongsTo
+    tags: [Tag!] @hasMany
+}
+
+type Examination {
+    id: ID!
+    name: String
+    type: String
+    color: String
+    description: String
+    note: String
+    created_at: DateTime
+    updated_at: DateTime
+
+    owner: User @belongsTo
+    subject: Clazz @belongsTo
+    timetable: Timetable @belongsTo
+    attendingUsers: [User!]! @hasMany
+    attendances: [Attendance!]! @hasMany
+    time: Time @belongsTo
+    location: Location @belongsTo
+    tags: [Tag!] @hasMany
+}
+
+type Meeting {
+    id: ID!
+    name: String
+    color: String
+    summary: String
+    created_at: DateTime
+    updated_at: DateTime
+
+    owner: User @belongsTo
+    timetable: Timetable @belongsTo
+    pictures: [Picture!] @hasMany
+    documents: [Document!] @hasMany
+    attendingUsers: [User!] @hasMany
+    attendances: [Attendance!] @hasMany
+    time: Time @belongsTo
+    location: Location @belongsTo
+    tags: [Tag!] @hasMany
+    vote: Vote @belongsTo
+}
+
+type Picture {
+    id: ID!
+    name: String
+    type: String
+    size: Int
+    remote_location: String
+    description: String
+    created_at: DateTime
+    updated_at: DateTime
+
+    picturable_id: ID!
+    picturable_type: String!
+}
+
+type Document {
+    id: ID!
+    name: String
+    type: String
+    size: Int
+    remote_location: String
+    description: String
+    created_at: DateTime
+    updated_at: DateTime
+
+    documentable_id: ID!
+    documentable_type: String!
+}
+
+type Tag{
+    id: ID!
+    name: String
+    description: String
+    color: Int
+
+    meetings: [Meeting!] @hasMany
+    examinations: [Examination!] @hasMany
+    clazzes: [Clazz!] @hasMany
+    owner: User! @belongsTo
+}
+
+type Tagged{
+    id: ID!
+    tag_id: ID!
+
+    taggable_id: ID!
+    taggable_type: String
+}
+
+type Location {
+    id: ID!
+    address: String
+
+    building: String
+    floor: String
+    room: String
+    latLng: String
+
+    locatable_id: ID!
+    locatable_type: String
+
+    created_at: DateTime
+    updated_at: DateTime
+}
+
+type Time {
+    id: ID!
+
+    weakly_repeats: Int
+
+    timable_id: ID!
+    timable_type: String
+
+    start_time: DateTime
+    end_time: DateTime
+
+    created_at: DateTime
+    updated_at: DateTime
+}
+
+type LoginPayload{
+    token: String!
+    user: User!
+}
+
+type UserActivity{
+    meetingsOwned: [Meeting!]
+    examinationsOwned: [Examination!]
+    clazzesOwned: [Clazz!]
+    attendingMeetings: [Meeting!]
+    attendingExaminations: [Examination!]
+    attendingClazzes: [Clazz!]
+}

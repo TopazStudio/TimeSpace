@@ -21,8 +21,11 @@ class CreateUserFollowersTable extends Migration
 
             /**
              * State of the accepted follower request
+             * 2 - PUBLIC
+             * 1 - ACCEPTED
+             * 0 - REJECTED
             */
-            $table->unsignedSmallInteger('accepted');
+            $table->unsignedSmallInteger('accepted')->default(0);
 
             //metadata
             $table->timestamps();

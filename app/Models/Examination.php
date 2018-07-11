@@ -123,4 +123,9 @@ class Examination extends Model
     public function time(){
         return $this->morphOne('App\Models\Time','timable');
     }
+
+    //tags
+    public function tags(){
+        return $this->morphToMany('App\Models\Tag', 'taggable','tagged');
+    }
 }

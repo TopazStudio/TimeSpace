@@ -11,16 +11,16 @@ class InvitationMail extends Mailable
 {
     use Queueable, SerializesModels;
 
-    private $title;
+    private $inviteCode;
 
     /**
      * Create a new message instance.
      *
-     * @param $title
+     * @param $inviteCode
      */
-    public function __construct($title)
+    public function __construct($inviteCode)
     {
-        $this->title = $title;
+        $this->inviteCode = $inviteCode;
     }
 
     /**
@@ -32,6 +32,6 @@ class InvitationMail extends Mailable
     {
         return $this->from("timespaceSupport@gmail.com")
             ->view('email.invitationEmail')
-            ->with('title',$this->title);
+            ->with('inviteCode',$this->inviteCode);
     }
 }

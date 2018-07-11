@@ -13,6 +13,7 @@ class Picture extends Model
         'name',
         'type',
         'size',
+        'local_location',
         'remote_location',
         'description',
     ];

@@ -9,15 +9,13 @@
 namespace App\Service;
 
 
-class OrganizationService extends Service
+class OrganizationService extends CRUDService
 {
-    /**
-     * Initialize pic-path and pic-type
-     */
-    public function __construct(){
-        $this->picPath = "organizationPics";
-        $this->picType = "organization";
-    }
+
+    protected $picPath = "organizationPics";
+
+    protected $picType = "organization";
+
 
     public function getModelType()
     {
@@ -27,5 +25,9 @@ class OrganizationService extends Service
     public function getEventChannel()
     {
         return 'organization';
+    }
+
+    public function getPolymorphicName(){
+        return "organization";
     }
 }

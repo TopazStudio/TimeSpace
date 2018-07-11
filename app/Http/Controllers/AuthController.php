@@ -15,6 +15,7 @@ use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Foundation\Auth\AuthenticatesUsers;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Auth;
 use Tymon\JWTAuth\Exceptions\JWTException;
 use Tymon\JWTAuth\Facades\JWTAuth;
 
@@ -49,11 +50,13 @@ class AuthController extends Controller
             try {
                 if (! $this->token = JWTAuth::fromUser($request->user)) {
                     return false;
+                }else{
+                    Auth::login($request->user,false);
+                    return true;
                 }
             } catch (JWTException $e) {
                 return false;
             }
-            return true;
         }else{
             try {
                 if (! $this->token = JWTAuth::attempt($this->credentials($request))) {

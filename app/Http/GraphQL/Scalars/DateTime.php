@@ -41,7 +41,7 @@ class DateTime extends ScalarType
             throw new Error("Cannot represent following value as datetime: " . Utils::printSafeJson($value));
         }
 
-        return Carbon::createFromTimestamp($value)->toDateTimeString();
+        return Carbon::createFromTimestampMs($value)->toDateTimeString();
     }
 
     /**

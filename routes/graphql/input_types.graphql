@@ -24,25 +24,91 @@ input Picture_Input {
 input Document_Input {
     id: ID!
     name: String
-    location: String
+    type: String
+    size: Int
+    remote_location: String
     description: String
 
-    documentable_id: ID!
-    documentable_type: String!
+    documentable_id: ID
+    documentable_type: String
 }
 
 input Location_Input {
     id: ID!
+    address: String
 
-    country: String
-    county_or_state: String
-    city: String
-    street_address: String
-    landmarks: String
+    building: String
+    floor: String
+    room: String
 
-    latitude: Int
-    longitude: Int
+    latLng: String
 
-    locatable_id: ID!
+    locatable_id: ID
     locatable_type: String
+}
+
+input Tag_Input {
+    id : ID!
+    owner_id: ID!
+
+    name: String
+    description: String
+    color: Int
+}
+
+input Tagged_Input {
+    id : ID!
+    tag_id : ID!
+
+    taggable_id : ID
+    taggable_type : String
+}
+
+input Clazz_Input {
+    id: ID!
+    owner_id: ID!
+    time_table_id: ID!
+
+    name: String
+    note: String
+    abbreviation: String
+    color: String
+    description: String
+    teacher_name: String
+}
+
+input Examination_Input {
+    id: ID!
+    owner_id: ID!
+    subject_id: ID!
+    time_table_id: ID!
+
+    name: String
+    type: String
+    color: String
+    description: String
+    note: String
+}
+
+input Meeting_Input {
+    id: ID!
+    owner_id: ID!
+    time_table_id: ID!
+
+    name:String
+    summary:String
+    color:String
+    description:String
+}
+
+input Time_Input {
+    id: ID!
+
+    weakly_repeats: Int
+
+    timable_id: ID!
+    timable_type: String
+
+    start_time: DateTime
+    end_time: DateTime
 }

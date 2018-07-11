@@ -17,7 +17,7 @@ class Meeting extends Model
         'time_table_id',
 
         'name',
-        'note',
+        'summary',
         'color',
         'description',
     ];
@@ -33,7 +33,7 @@ class Meeting extends Model
              */
             'attributes' => [
                 'name',
-                'note',
+                'summary',
                 'color',
                 'description',
             ],
@@ -90,8 +90,8 @@ class Meeting extends Model
     }
 
     //time //many for agendas
-    public function times(){
-        return $this->morphMany('App\Models\Time', 'timable');
+    public function time(){
+        return $this->morphOne('App\Models\Time', 'timable');
     }
 
     //location

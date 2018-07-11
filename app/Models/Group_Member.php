@@ -20,4 +20,14 @@ class Group_Member extends Model
         'user_id',
         'join_status'
     ];
+
+    //user
+    public function user(){
+        return $this->belongsTo('App\Models\User','user_id');
+    }
+
+    //user
+    public function group(){
+        return $this->belongsTo('App\Models\Group','group_id');
+    }
 }

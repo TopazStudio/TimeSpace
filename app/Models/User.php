@@ -86,6 +86,10 @@ class User extends Authenticatable implements CRUDable
 
     //#################### RELATIONSHIPS ###################//
 
+    public function owned_tags(){
+        return $this->hasMany('App\Models\Tag', 'owner_id');
+    }
+
     //Meetings owned by the user
     public function meetingsOwned()
     {
@@ -101,19 +105,19 @@ class User extends Authenticatable implements CRUDable
     //Examinations owned by the user
     public function examinationsOwned()
     {
-        return $this->morphedByMany('App\Models\Examination', 'owner_id');
+        return $this->hasMany('App\Models\Examination', 'owner_id');
     }
 
     //Meetings owned by the user
     public function studiesOwned()
     {
-        return $this->morphedByMany('App\Models\Study', 'owner_id');
+        return $this->hasMany('App\Models\Study', 'owner_id');
     }
 
     //Classes owned by the user
     public function clazzesOwned()
     {
-        return $this->morphedByMany('App\Models\Clazz', 'owner_id');
+        return $this->hasMany('App\Models\Clazz', 'owner_id');
     }
 
     //Meetings
@@ -161,4 +165,12 @@ class User extends Authenticatable implements CRUDable
         return $this->belongsToMany('App\Models\User','user_followers','follower_id','user_id');
     }
 
+    //Groups
+    public function groups(){
+        return $this->belongsToMany('App\Models\Group','group_members','user_id');
+    }
+
+    public function group_memberships(){
+        return $this->hasMany('App\Models\Group_Member','user_id');
+    }
 }

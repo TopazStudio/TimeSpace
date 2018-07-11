@@ -3,6 +3,7 @@
 namespace App\Http;
 
 use App\Http\Middleware\CORS;
+use App\Http\Middleware\RefreshTokenAutomatically;
 use Illuminate\Foundation\Http\Kernel as HttpKernel;
 
 class Kernel extends HttpKernel
@@ -61,7 +62,8 @@ class Kernel extends HttpKernel
         'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
         'signed' => \Illuminate\Routing\Middleware\ValidateSignature::class,
         'throttle' => \Illuminate\Routing\Middleware\ThrottleRequests::class,
-        'auth.jwt' => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
+//        'auth.jwt' => \Tymon\JWTAuth\Middleware\GetUserFromToken::class,
+        'auth.jwt' => RefreshTokenAutomatically::class,
         'role' => \Zizaco\Entrust\Middleware\EntrustRole::class,
         'permission' => \Zizaco\Entrust\Middleware\EntrustPermission::class,
         'ability' => \Zizaco\Entrust\Middleware\EntrustAbility::class,

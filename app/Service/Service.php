@@ -9,103 +9,28 @@
 namespace App\Service;
 
 
-use App\Events\CRUDEvent;
-use App\Util\CRUD\CRUDService;
-use App\Util\CRUD\HandlesCRUD;
-use App\Util\CRUD\HandlesImages;
-use App\Util\CRUD\HandlesRoles;
-
-class Service implements CRUDService
+class Service
 {
-    use HandlesCRUD,HandlesRoles,HandlesImages;
+    /**
+     * @var $message string - Contains a message to be sent back along with the
+     * response to the client.
+     */
+    public $message = "success";
 
-    public function getModelType()
-    {
-        return '';
-    }
+    /**
+     * @var $status integer - Contains the response status to be sent back.
+     */
+    public $status = 200;
 
-    public function getEventChannel()
-    {
-        return '';
-    }
+    /**
+     * @var $data array - Contains the data to be returned
+     * after processing the request.
+     */
+    public $data = [];
 
-    //HOOKS
+    /**
+     * @var $errors array - Contains all errors encountered during processing the request.
+     */
+    public $errors = [];
 
-    public function beforeCreate($request,$attributes){
-        //
-        return true;
-    }
-
-    public function afterCreate($request,$model){
-        //SEND ANY CRUD EVENT
-        $crudEvent = new CRUDEvent();
-        $crudEvent->setPayload([
-            'crudType' => 'created',
-            'channel' => $this->getEventChannel(),
-            'model' => $model
-        ]);
-        broadcast($crudEvent)->toOthers();
-
-        //SAVE ANY TEMPORARY IMAGE
-        if($request->has("with_temp_pics")){
-            $pics = [];
-            foreach ($request->pictures as $picture){
-                $pics[] = $this->saveImagesFromTemp($picture,$model->id);
-            }
-            $this->data['pictures'] = $pics;
-        }
-        return true;
-    }
-
-    public function beforeUpdate($request,$attributes){
-        //
-        return true;
-    }
-
-    public function afterUpdate($request,$model){
-        $crudEvent = new CRUDEvent();
-        $crudEvent->setPayload([
-            'crudType' => 'updated',
-            'channel' => $this->getEventChannel(),
-            'model' => $model
-        ]);
-        broadcast($crudEvent)->toOthers();
-        return true;
-    }
-
-    public function beforeDelete($request,$attributes){
-        //
-        return true;
-    }
-
-    public function afterDelete($request,$model){
-        $crudEvent = new CRUDEvent();
-        $crudEvent->setPayload([
-            'crudType' => 'deleted',
-            'channel' => $this->getEventChannel(),
-            'model' => $model
-        ]);
-        broadcast($crudEvent)->toOthers();
-        return true;
-    }
-
-    public function beforeGetAll($request){
-        //
-        return true;
-    }
-
-    public function afterGetAll($request,$models){
-        //
-        return true;
-    }
-
-    public function beforeGet($request){
-        //
-        return true;
-    }
-
-    public function afterGet($request,$model){
-        //
-        return true;
-    }
 }

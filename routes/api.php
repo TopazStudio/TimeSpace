@@ -56,7 +56,7 @@ Route::group(['prefix'=>'/mail', 'middleware'=>['auth.jwt']],function () {
     ]);
 });
 
-Route::group(['prefix'=>'/group', 'middleware'=>['web']],function () {
+Route::group(['prefix'=>'/group', 'middleware'=>['auth.jwt']],function () {
 
     Route::post('/joinGroup', [
         'uses' => 'GroupController@joinGroup',
@@ -64,6 +64,17 @@ Route::group(['prefix'=>'/group', 'middleware'=>['web']],function () {
 
     Route::post('/leaveGroup', [
         'uses' => 'GroupController@leaveGroup',
+    ]);
+});
+
+Route::group(['prefix'=>'/appinvites', 'middleware'=>['auth.jwt']],function () {
+
+    Route::post('/searchForFriends', [
+        'uses' => 'AppInvitesController@searchForFriends',
+    ]);
+
+    Route::post('/commitAppInvites', [
+        'uses' => 'AppInvitesController@commitAppInvites',
     ]);
 });
 

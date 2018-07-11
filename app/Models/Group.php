@@ -75,14 +75,19 @@ class Group extends Model implements CRUDable
         return $this->belongsTo('App\Models\User','owner_id');
     }
 
-    //groups
+    //organization
     public function organization(){
         return $this->belongsTo('App\Models\Organization','organization_id');
     }
 
-    //groups
+    //users
     public function group_members(){
         return $this->belongsToMany('App\Models\User','group_members','group_id');
+    }
+
+    //group_memberships
+    public function group_memberships(){
+        return $this->hasMany('App\Models\Group_Member','group_id');
     }
 
     //pictures

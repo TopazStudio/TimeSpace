@@ -14,15 +14,12 @@ use App\Models\Group_Member;
 use App\Util\CRUD\HandlesImages;
 use Illuminate\Http\Request;
 
-class GroupService extends Service
+class GroupService extends CRUDService
 {
-    /**
-     * Initialize pic-path and pic-type
-     */
-    public function __construct(){
-        $this->picPath = "groupPics";
-        $this->picType = "group";
-    }
+
+    protected $picPath = "groupPics";
+
+    protected $picType = "group";
 
     public function getModelType()
     {
@@ -30,6 +27,11 @@ class GroupService extends Service
     }
 
     public function getEventChannel()
+    {
+        return 'group';
+    }
+
+    public function getPolymorphicName()
     {
         return 'group';
     }

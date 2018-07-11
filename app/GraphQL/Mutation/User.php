@@ -4,6 +4,7 @@ namespace App\GraphQL\Mutation;
 
 use App\Service\UserService;
 use App\Util\CRUD\HandlesGraphQLMutationRequest;
+use Exception;
 use GraphQL\Type\Definition\ResolveInfo;
 
 

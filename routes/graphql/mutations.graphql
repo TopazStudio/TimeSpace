@@ -13,4 +13,40 @@ type Mutation{
         email: String!
         password: String! @validate(rules: ["required","min:6"])
     ): LoginPayload @field(resolver: "App\\GraphQL\\Mutation\\Login@resolve")
+
+    tag(
+        method: MUTATION_METHOD!
+        tag: Tag_Input!
+    ): Tag @field(resolver: "App\\GraphQL\\Mutation\\Tag@resolve")
+
+    tagged(
+        method: MUTATION_METHOD!
+        tagged: Tagged_Input!
+    ): Tagged @field(resolver: "App\\GraphQL\\Mutation\\Tagged@resolve")
+
+    clazz(
+        method: MUTATION_METHOD!
+        clazz: Clazz_Input!
+        time: Time_Input!
+        location: Location_Input!
+        taggeds: [Tagged_Input!]
+    ): Clazz @field(resolver: "App\\GraphQL\\Mutation\\Clazz@resolve")
+
+    meeting(
+        method: MUTATION_METHOD!
+        meeting: Meeting_Input!
+        location: Location_Input!
+        users: [User_Input]!
+        time: [Time_Input!]!
+        taggeds: [Tagged_Input!]
+        documents: [Document_Input!]
+    ): Meeting @field(resolver: "App\\GraphQL\\Mutation\\Meeting@resolve")
+
+    examination(
+        method: MUTATION_METHOD!
+        examination: Examination_Input!
+        time: Time_Input!
+        location: Location_Input!
+        taggeds: [Tagged_Input!]
+    ): Examination @field(resolver: "App\\GraphQL\\Mutation\\Examination@resolve")
 }

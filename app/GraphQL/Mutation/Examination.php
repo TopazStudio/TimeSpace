@@ -2,32 +2,51 @@
 
 namespace App\GraphQL\Mutation;
 
-use Folklore\GraphQL\Support\Mutation;
+
+
+use App\Service\ExaminationService;
+use App\Util\CRUD\HandlesGraphQLMutationRequest;
 use GraphQL\Type\Definition\ResolveInfo;
-use GraphQL\Type\Definition\Type;
-use GraphQL;
 
-class Examination extends Mutation
+class Examination
 {
-    protected $attributes = [
-        'name' => 'Examination',
-        'description' => 'A mutation'
-    ];
+    use HandlesGraphQLMutationRequest;
 
-    public function type()
+    public function __construct(ExaminationService $CRUDService)
     {
-        return Type::listOf(Type::string());
+        $this->CRUDService = $CRUDService;
     }
 
-    public function args()
-    {
-        return [
-            
-        ];
-    }
 
+    /**
+     * Resolve the mutation.
+     *
+     * @param  mixed $root
+     * @param  array $args
+     * @return mixed
+     * @throws \Exception
+     */
     public function resolve($root, $args, $context, ResolveInfo $info)
     {
-        return [];
+
+        $context->request->merge(array_merge($args['examination'],$args));
+
+        if(isset($args['time'])){
+            $context->request->request->add(['with_time' => true]);
+            $context->request->merge(array_merge($args['time'],$args));
+        }
+
+        if(isset($args['location'])){
+            $context->request->request->add(['with_location' => true]);
+            $context->request->merge(array_merge($args['location'],$args));
+        }
+
+        if(isset($args['taggeds'])){
+            $context->request->request->add(['with_tagged' => true]);
+            $context->request->merge(array_merge($args['taggeds'],$args));
+        }
+
+        $fn = $args['method'];
+        return $this->$fn($context->request,$context->request->id ?? $context->request->id);
     }
 }

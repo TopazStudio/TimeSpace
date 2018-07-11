@@ -23,10 +23,10 @@ class GroupController extends Controller
     }
 
     function joinGroup(Request $request){
-        $this->validate($request,[
-            'user_id' => 'required|integer',
-            'group_id' => 'required|integer'
-        ]);
+
+        $user_id = $request->user['id'];
+        $group_id = $request->group['id'];
+        $request->merge(array($user_id,$group_id));
 
         if($this->CRUDService->joinGroup($request)){
             return $this->successResponse($this->CRUDService->data,$this->CRUDService->status);
@@ -36,10 +36,10 @@ class GroupController extends Controller
     }
 
     function leaveGroup(Request $request){
-        $this->validate($request,[
-            'user_id' => 'required|integer',
-            'group_id' => 'required|integer'
-        ]);
+
+        $user_id = $request->user['id'];
+        $group_id = $request->group['id'];
+        $request->merge(array($user_id,$group_id));
 
         if($this->CRUDService->leaveGroup($request)){
             return $this->successResponse($this->CRUDService->data,$this->CRUDService->status);

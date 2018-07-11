@@ -14,13 +14,13 @@ class Clazz extends Model
     protected $fillable = [
         'owner_id',
         'time_table_id',
-        'teacher_id',
 
         'name',
         'note',
         'abbreviation',
         'color',
         'description',
+        'teacher_name',
     ];
 
     //###################  CRUD ##################//
@@ -38,6 +38,7 @@ class Clazz extends Model
                 'abbreviation',
                 'color',
                 'description',
+                'teacher_name'
             ],
 
             /**
@@ -45,7 +46,6 @@ class Clazz extends Model
              */
             'foreign_keys' => [
                 'owner_id',
-                'teacher_id',
                 'time_table_id'
             ],
 
@@ -71,23 +71,23 @@ class Clazz extends Model
     }
 
     //attending users
-    public function teacher(){
-        return $this->belongsTo('App\Models\User', 'teacher_id');
-    }
-
-    //attending users
     public function owner(){
         return $this->belongsTo('App\Models\User', 'owner_id');
     }
 
     //attending users
-    public function time_table(){
+    public function timetable(){
         return $this->belongsTo('App\Models\TimeTable', 'time_table_id');
     }
 
     //location
     public function location(){
         return $this->morphOne('App\Models\Location','locatable');
+    }
+
+    //tags
+    public function tags(){
+        return $this->morphToMany('App\Models\Tag', 'taggable','tagged');
     }
 
     //time
