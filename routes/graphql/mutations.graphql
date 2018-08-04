@@ -37,7 +37,7 @@ type Mutation{
         meeting: Meeting_Input!
         location: Location_Input!
         users: [User_Input]!
-        time: [Time_Input!]!
+        time: Time_Input!
         taggeds: [Tagged_Input!]
         documents: [Document_Input!]
     ): Meeting @field(resolver: "App\\GraphQL\\Mutation\\Meeting@resolve")

@@ -31,7 +31,7 @@ class CreateExaminationsTable extends Migration
              * - any other type
             */
             $table->string('type');
-            $table->unsignedMediumInteger('color')->nullable();
+            $table->string('color')->nullable();
             $table->string('description')->nullable();
             $table->longText('note')->nullable();
 

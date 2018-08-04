@@ -39,7 +39,7 @@ class GroupService extends CRUDService
     public function joinGroup(Request $request){
         //CHECK IF GROUP IS HIDDEN
         try {
-            $group = Group::find($request->group_id);
+            $group = Group::find($request->group_id_2);
             if ($group->group_type == "HIDDEN"){
                 $this->errors['join_group'] = 'You cannot join this group via requests. Please contact the 
                 group admin for registration.';
@@ -47,16 +47,16 @@ class GroupService extends CRUDService
                 return empty($this->errors);
             }else if ($group->group_type == "PUBLIC"){
                 $this->data = Group_Member::create([
-                    'group_id' => $request->group_id,
-                    'user_id' => $request->user_id,
+                    'group_id' => $request->group_id_2,
+                    'user_id' => $request->user_id_2,
                     'join_status' => "JOINED"
                 ]);
                 $this->status = 200;
                 return empty($this->errors);
             }else if($group->group_type == "PRIVATE"){
                 $this->data = Group_Member::create([
-                    'group_id' => $request->group_id,
-                    'user_id' => $request->user_id,
+                    'group_id' => $request->group_id_2,
+                    'user_id' => $request->user_id_2,
                     'join_status' => "PENDING"
                 ]);
                 //todo: Send request to owner
@@ -78,8 +78,8 @@ class GroupService extends CRUDService
         //CHECK IF GROUP IS HIDDEN
         try {
             if ($model = Group_Member::where([
-                ['user_id','=',$request->user_id],
-                ['group_id','=',$request->group_id]
+                ['user_id','=',$request->user_id_2],
+                ['group_id','=',$request->group_id_2]
             ])->first()){
                 if ($model->delete()){
                     $model->join_status = "LEFT";

@@ -29,7 +29,7 @@ class CreateClazzsTable extends Migration
             $table->string('name');
             $table->string('abbreviation')->nullable();
             $table->string('note')->nullable();
-            $table->unsignedMediumInteger('color')->nullable();
+            $table->string('color')->nullable();
             $table->string('description')->nullable();
 
             //metadata
